@@ -1,0 +1,28 @@
+node('master')
+{
+    cleanWs()
+    stage('Checkout')
+    {
+
+    checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/rakeshdevopsgit/simple-java-maven-app']])
+    }
+    stage('Build')
+    {
+       sh """
+            mvn clean install -DskipTests=true
+        """
+    }
+    stage('Unit testing')
+    {
+    	sh 'mvn test'
+    	junit 'target/surefire-reports/*.xml'
+    }
+    stage('Code quality')
+    {
+    	echo "In code quality analysis stage"
+    }
+    stage('Publish')
+    {
+        echo "[Info] artifact published into nexus"
+    }
+}
